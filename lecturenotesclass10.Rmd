@@ -1,7 +1,7 @@
 ---
 title: "Introduction to probability"
-author: ""
-date: ""
+author: "Yijin Alice Chen"
+date: "02/22/2021"
 output: html_document
 editor_options: 
   chunk_output_type: console
@@ -27,7 +27,7 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE,
 
 ```{r packages}
 library(tidyverse)
-library(vcd) # used for Arthritis data
+library(vcd)
 ```
 
 ## Computing probabilities
@@ -50,16 +50,22 @@ xtabs(~ Treatment + Improved, data = Arthritis) %>%
 
 - How many patients were enrolled in the clinical trial?
 
+the sum of all the rows and columns-- 84 patients.
+
 - What is the probability a randomly selected patient received the placebo?
+43/84
 
 - What is the probability a randomly selected patient received the placebo
   and had a marked improvement?
+1/12
   
 - What is the probability a randomly selected patient received the placebo
   and the treatment?
+  0 percent.
   
 - What is the probability a randomly selected patient had some improvement or
   was on the treatment?
+48/84= 4/7
 
 ## Using computer simulations to calculate probabilities
 
@@ -75,6 +81,9 @@ marbles <- c("red", "red", "white", "red", "blue", "blue", "red", "blue")
 Suppose we draw a single marble from our imaginary box, where all the marbles
 are equally likely to be selected. What is the probability the marble is blue? 
 How about white?
+
+blue: 3/8
+white: 1/8
 
 We can simulate this "drawing" with the `sample()` function.
 
@@ -156,18 +165,46 @@ difference between dice roll 1 and dice roll 2 is equal to 4.
 Perform a simulation to compute this empirical probability.
 
 Write down your guess to the answer before you calculate it.
+my guess is that the probability of the square of dice roll 1 equaling to dice roll 2 is higher.
 
 ```{r simulate_rolls}
-
+dice <- c("1", "2", "3", "4", "5", "6")
 ```
 
-```{r identify_events}
+```{r identify_events1}
+roll_results_square <- tibble(
+  roll_1= sample (dice, size=10000, replace=TRUE),
+  roll_2= sample (dice, size=10000, replace=TRUE))
+roll_results_square
 
+roll_results_square <- roll_results_square %>% 
+  mutate(square_match = roll_1 == roll_2)
+roll_results_square
 ```
 
-```{r summarize_rolls}
+```{r identify_events2, warning=FALSE}
+roll_results_sum <- tibble(
+  roll_1= sample (dice, size=10000, replace=TRUE),
+  roll_2= sample (dice, size=10000, replace=TRUE))
+roll_results_sum
 
+roll_results_sum %>%
+  mutate(total_sum = strtoi(roll_1, base = 0L) + strtoi(roll_2, base = 0L))
+roll_results_sum$total_sum
 ```
+
+```{r summarize_rolls1}
+roll_results_square %>% 
+  count(square_match) %>% 
+  mutate(proportion = n / sum(n))
+```
+
+```{r summarize_rolls2, include=FALSE}
+roll_results_sum 
+# i have some problems since R keeps telling me the total_sum column is unknown
+```
+
+I think the proportion of total sum equaling 4 is actually bigger.
 
 ## Additional Resources-please look at before Weds.
 
