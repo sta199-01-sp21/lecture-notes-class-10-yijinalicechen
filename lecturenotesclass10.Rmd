@@ -168,43 +168,26 @@ Write down your guess to the answer before you calculate it.
 my guess is that the probability of the square of dice roll 1 equaling to dice roll 2 is higher.
 
 ```{r simulate_rolls}
-dice <- c("1", "2", "3", "4", "5", "6")
+roll_results<- tibble(
+  die_1= replicate (n=10000, expr = sample(1:6, size=1)),
+  die_2= replicate (n=10000, expr = sample(1:6, size=1))
+)
 ```
 
-```{r identify_events1}
-roll_results_square <- tibble(
-  roll_1= sample (dice, size=10000, replace=TRUE),
-  roll_2= sample (dice, size=10000, replace=TRUE))
-roll_results_square
-
-roll_results_square <- roll_results_square %>% 
-  mutate(square_match = roll_1 == roll_2)
-roll_results_square
+```{r identify_events}
+roll_results <- roll_results %>%
+  mutate(event_1 = die_1^2 == die_2,
+         event_2 = abs(die_1 - die_2) == 4)
+roll_results
 ```
 
-```{r identify_events2, warning=FALSE}
-roll_results_sum <- tibble(
-  roll_1= sample (dice, size=10000, replace=TRUE),
-  roll_2= sample (dice, size=10000, replace=TRUE))
-roll_results_sum
 
-roll_results_sum %>%
-  mutate(total_sum = strtoi(roll_1, base = 0L) + strtoi(roll_2, base = 0L))
-roll_results_sum$total_sum
+```{r summarize_rolls}
+roll_results %>%
+ count(event_1, event_2)
 ```
 
-```{r summarize_rolls1}
-roll_results_square %>% 
-  count(square_match) %>% 
-  mutate(proportion = n / sum(n))
-```
-
-```{r summarize_rolls2, include=FALSE}
-roll_results_sum 
-# i have some problems since R keeps telling me the total_sum column is unknown
-```
-
-I think the proportion of total sum equaling 4 is actually bigger.
+the proportion of event 2 is actually bigger.
 
 ## Additional Resources-please look at before Weds.
 
